@@ -6,6 +6,14 @@ pipeline {
         maven 'maven3'
     }
 
+    environment {
+        NEXUS_URL        = 'http://13.206.208.132:8081'
+        NEXUS_REPOSITORY = 'maven-releases'
+        GROUP_ID         = 'com.example'
+        ARTIFACT_ID      = 'shopping-cart'
+        VERSION          = "1.0.${BUILD_NUMBER}"
+    }
+
     stages {
 
         stage('Clone') {
@@ -19,5 +27,23 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
+
+        stage('Upload to Nexus') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'nexus-creds',
+                    usernameVariable: 'NEXUS_USER',
+                    passwordVariable: 'NEXUS_PASS'
+                )]) {
+
+                    sh """
+                    curl -v -u $NEXUS_USER:$NEXUS_PASS \
+                    --upload-file target/*.jar \
+                    $NEXUS_URL/repository/$NEXUS_REPOSITORY/\
+$GROUP_ID/$ARTIFACT_ID/$VERSION/$ARTIFACT_ID-$VERSION.jar
+                    """
+                }
+            }
+        }
     }
-}
+} 
