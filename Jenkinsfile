@@ -75,5 +75,17 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+
+                sh '''
+                sed -i "s|IMAGE_NAME|${DOCKER_IMAGE}:${BUILD_NUMBER}|g" k8s/deployment.yml
+
+                kubectl apply -f k8s/deployment.yml
+                kubectl apply -f k8s/service.yml
+                '''
+            }
+        }
     }
 }
