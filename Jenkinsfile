@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        NEXUS_URL = 'http:65.2.191.60:8081'
+        NEXUS_URL = 'http://65.2.191.60:8081'
         NEXUS_REPOSITORY = 'maven-releases'
         GROUP_ID = 'com.example'
         ARTIFACT_ID = 'shopping-cart'
