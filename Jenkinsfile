@@ -28,22 +28,22 @@ pipeline {
             }
         }
 
-        stage('Upload to Nexus') {
-            steps {
+       stage('Upload to Nexus') {
+    steps {
 
-                withCredentials([usernamePassword(
-                    credentialsId: 'nexus-creds',
-                    usernameVariable: 'NEXUS_USER',
-                    passwordVariable: 'NEXUS_PASS'
-                )]) {
+        withCredentials([usernamePassword(
+            credentialsId: 'nexus-creds',
+            usernameVariable: 'NEXUS_USER',
+            passwordVariable: 'NEXUS_PASS'
+        )]) {
 
-                    sh """
-                    curl -u $NEXUS_USER:$NEXUS_PASS \
-                    --upload-file target/shopping-cart-0.0.1-SNAPSHOT.war \
-                    $NEXUS_URL/repository/$NEXUS_REPOSITORY/$GROUP_ID/$ARTIFACT_ID/$VERSION/$ARTIFACT_ID-$VERSION.war
-                    """
-                }
-            }
+            sh '''
+            curl -v -u ${NEXUS_USER}:${NEXUS_PASS} \
+            --upload-file target/shopping-cart-0.0.1-SNAPSHOT.war \
+            http://13.206.208.132:8081/repository/maven-releases/com/example/shopping-cart/1.0.${BUILD_NUMBER}/shopping-cart-1.0.${BUILD_NUMBER}.war
+            '''
         }
+    }
+}
     }
 }
