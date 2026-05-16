@@ -77,15 +77,16 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            steps {
+    steps {
+        sh '''
+        aws eks update-kubeconfig --region ap-south-1 --name shopping-cluster
 
-                sh '''
-                sed -i "s|IMAGE_NAME|${DOCKER_IMAGE}:${BUILD_NUMBER}|g" k8s/deployment.yml
+        sed -i "s|IMAGE_NAME|lucky7913/shopping-cart:${BUILD_NUMBER}|g" k8s/deployment.yml
 
-                kubectl apply -f k8s/deployment.yml
-                kubectl apply -f k8s/service.yml
-                '''
-            }
-        }
+        kubectl apply -f k8s/deployment.yml
+        kubectl apply -f k8s/service.yml
+        '''
+    }
+}
     }
 }
