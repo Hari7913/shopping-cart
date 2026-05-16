@@ -9,7 +9,7 @@ pipeline {
     environment {
         NEXUS_URL        = 'http://13.206.208.132:8081'
         NEXUS_REPOSITORY = 'maven-releases'
-        GROUP_ID         = 'com.example'
+        GROUP_ID         = 'com/example'
         ARTIFACT_ID      = 'shopping-cart'
         VERSION          = "1.0.${BUILD_NUMBER}"
     }
@@ -30,6 +30,7 @@ pipeline {
 
         stage('Upload to Nexus') {
             steps {
+
                 withCredentials([usernamePassword(
                     credentialsId: 'nexus-creds',
                     usernameVariable: 'NEXUS_USER',
@@ -37,13 +38,12 @@ pipeline {
                 )]) {
 
                     sh """
-                    curl -v -u $NEXUS_USER:$NEXUS_PASS \
-                    --upload-file target/*.jar \
-                    $NEXUS_URL/repository/$NEXUS_REPOSITORY/\
-$GROUP_ID/$ARTIFACT_ID/$VERSION/$ARTIFACT_ID-$VERSION.jar
+                    curl -u $NEXUS_USER:$NEXUS_PASS \
+                    --upload-file target/shopping-cart-0.0.1-SNAPSHOT.war \
+                    $NEXUS_URL/repository/$NEXUS_REPOSITORY/$GROUP_ID/$ARTIFACT_ID/$VERSION/$ARTIFACT_ID-$VERSION.war
                     """
                 }
             }
         }
     }
-} 
+}
